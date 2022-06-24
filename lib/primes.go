@@ -26,3 +26,16 @@ func PreviousPrime(i int) int {
 		}
 	}
 }
+
+func NextPrime(i int) int {
+	if i%2 == 0 {
+		i--
+	}
+
+	for {
+		i += 2
+		if IsPrime(i) {
+			return i
+		}
+	}
+}
