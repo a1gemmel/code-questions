@@ -12,5 +12,3 @@ func main() {
 
 }
 " > "${DIR}/main.go"
-
-cd "${DIR}"
