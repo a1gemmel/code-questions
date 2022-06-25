@@ -39,3 +39,23 @@ func NextPrime(i int) int {
 		}
 	}
 }
+
+func PrimeSieve(max int) []int {
+	isntPrime := make([]bool, max+1)
+
+	for i := 2; i*i < max; i++ {
+		for j := i * 2; j <= max; j += i {
+			isntPrime[j] = true
+		}
+	}
+
+	primes := []int{}
+
+	for ind, isnt := range isntPrime {
+		if ind > 1 && !isnt {
+			primes = append(primes, ind)
+		}
+	}
+
+	return primes
+}

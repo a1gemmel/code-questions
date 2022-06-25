@@ -3,15 +3,9 @@ package main
 import (
 	"fmt"
 	"sort"
-)
 
-func reverseStr(s string) string {
-	b := []byte(s)
-	for i := 0; i < len(s)/2; i++ {
-		b[i], b[len(b)-i-1] = b[len(b)-i-1], b[i]
-	}
-	return string(b)
-}
+	"github.com/a1gemmel/project-euler/lib"
+)
 
 func main() {
 
@@ -22,7 +16,7 @@ func main() {
 			product := i * j
 
 			productStr := fmt.Sprintf("%d", product)
-			if reverseStr(productStr) == productStr {
+			if lib.ReverseStr(productStr) == productStr {
 				fmt.Println(i, j, product)
 				palindromes = append(palindromes, product)
 			}
