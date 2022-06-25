@@ -8,6 +8,22 @@ func SumInts(arr []int) int {
 	return sum
 }
 
+func SumInt64s(arr []int64) int64 {
+	sum := int64(0)
+	for _, el := range arr {
+		sum += el
+	}
+	return sum
+}
+
+func MultiplyInts(arr []int) int {
+	product := 1
+	for _, el := range arr {
+		product *= el
+	}
+	return product
+}
+
 func MultiplesOf(n int, lessThan int) []int {
 	var s []int
 
@@ -43,4 +59,25 @@ func GenerateN(n int) []int {
 		arr[i] = i + 1
 	}
 	return arr
+}
+
+func Max(arr []int) int {
+	max := arr[0]
+
+	for _, el := range arr {
+		if el > max {
+			max = el
+		}
+	}
+	return max
+}
+
+func AllDivisors(n int) []int {
+	divisors := []int{n}
+	for i := 1; i <= n/2; i++ {
+		if n%i == 0 {
+			divisors = append(divisors, i)
+		}
+	}
+	return divisors
 }
