@@ -10,7 +10,6 @@ const cap = 100
 
 func exponentForm(x int) (base, power int) {
 	for i := float64(100); i >= 1; i-- {
-		//for i := float64(2); i <= cap; i++ {
 		nRoot := math.Pow(float64(x), 1/i)
 		if math.Abs(nRoot-math.Round(nRoot)) <= delta {
 			return int(math.Round(nRoot)), int(i)
