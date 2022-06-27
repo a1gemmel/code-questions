@@ -56,6 +56,18 @@ func (bi BigInt) Multiply(x int) BigInt {
 	return bi
 }
 
+func (a BigInt) Equals(b BigInt) bool {
+	if a.Length() != b.Length() {
+		return false
+	}
+	for i, el := range a.a {
+		if el != b.a[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func (bi BigInt) Repr() []int {
 	return bi.a
 }
@@ -75,4 +87,36 @@ func BigIntFactorial(n int) BigInt {
 		b = b.Multiply(i)
 	}
 	return b
+}
+
+func (a BigInt) Less(b BigInt) bool {
+	if a.Length() < b.Length() {
+		return true
+	}
+	if a.Length() > b.Length() {
+		return false
+	}
+	for i := a.Length() - 1; i >= 0; i-- {
+		if a.a[i] > b.a[i] {
+			return false
+		}
+		if a.a[i] < b.a[i] {
+			return true
+		}
+	}
+	return false
+}
+
+type BigIntList []BigInt
+
+func (l BigIntList) Less(i, j int) bool {
+	return l[i].Less(l[j])
+}
+
+func (l BigIntList) Len() int {
+	return len(l)
+}
+
+func (l BigIntList) Swap(i, j int) {
+	l[i], l[j] = l[j], l[i]
 }
