@@ -1,32 +1,10 @@
 package main
 
-import (
-	"fmt"
-	"sort"
-)
-
 func median(arr []int) float64 {
 	if len(arr)%2 == 0 {
 		return float64(arr[len(arr)/2]+arr[len(arr)/2-1]) / 2.0
 	}
 	return float64(arr[len(arr)/2])
-}
-
-// returns the new arrays and number of elements removed
-func removeNLessThanOrEqualToX(arr1, arr2 []int, n int, x float64) ([]int, []int, int) {
-	removed := 0
-	for n > 0 {
-		if len(arr1) == 0 || len(arr2) == 0 {
-			return arr1, arr2, removed
-		}
-		if arr1[0] < arr2[0] {
-			arr1 = arr1[1:]
-		} else {
-			arr2 = arr2[1:]
-		}
-		removed += 1
-	}
-	return arr1, arr2, removed
 }
 
 func min(a, b int) int {
@@ -36,65 +14,49 @@ func min(a, b int) int {
 	return b
 }
 
-func beforeMedian(length int) int {
-	if length%2 == 0 {
-		return length / 2
+func merge(nums1 []int, nums2 []int) []int {
+	merged := make([]int, 0, len(nums1)+len(nums2))
+	for len(nums1) > 0 || len(nums2) > 0 {
+		if len(nums1) == 0 {
+			return append(merged, nums2...)
+		}
+		if len(nums2) == 0 {
+			return append(merged, nums1...)
+		}
+		if nums1[0] < nums2[0] {
+			merged = append(merged, nums1[0])
+			nums1 = nums1[1:]
+		} else {
+			merged = append(merged, nums2[0])
+			nums2 = nums2[1:]
+		}
 	}
-	return length / 2
-}
-
-func take2(a []int) []int {
-	switch len(a) {
-	case 0:
-		return []int{}
-	case 1:
-		return a[:1]
-	default:
-		return a[:2]
-	}
+	return merged
 }
 
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
-	totalLen := len(nums1) + len(nums2)
-	toRemove := totalLen/2 - 1
 
-	for len(nums1) > 0 && len(nums2) > 0 {
-
-		median1 := median(nums1)
-		median2 := median(nums2)
-		removed := 0
-		if median1 < median2 {
-			removed = min(toRemove, beforeMedian(len(nums1)))
-			nums1 = nums1[removed:]
-			toRemove -= removed
+	for len(nums1) > 2 && len(nums2) > 2 {
+		minLen := min(len(nums1), len(nums2))
+		var toCut int
+		if minLen%2 == 0 {
+			toCut = (minLen - 2) / 2
 		} else {
-			removed = min(toRemove, beforeMedian(len(nums2)))
-			nums2 = nums2[removed:]
-			toRemove -= removed
+			toCut = (minLen - 1) / 2
 		}
-		fmt.Println("To Remove: ", toRemove, nums1, nums2)
-
-		if toRemove == 0 || removed == 0 {
-			break
+		if median(nums1) < median(nums2) {
+			nums1 = nums1[toCut:]
+			nums2 = nums2[0 : len(nums2)-toCut]
+		} else {
+			nums2 = nums2[toCut:]
+			nums1 = nums1[0 : len(nums1)-toCut]
 		}
 	}
 
-	if totalLen%2 == 1 {
-		if len(nums1) == 0 {
-			return float64(nums2[0])
-		}
-		if len(nums2) == 0 {
-			return float64(nums1[0])
-		}
-		return float64(min(nums1[0], nums2[0]))
-	}
-
-	concat := append(append([]int{}, take2(nums1)...), take2(nums2)...)
-	sort.Ints(concat)
-	return float64(concat[0]+concat[1]) / 2
-
+	merged := merge(nums1, nums2)
+	return median(merged)
 }
 
-func main() {
-	fmt.Println(findMedianSortedArrays([]int{1, 2}, []int{3, 4}))
-}
+// func main() {
+// 	fmt.Println(findMedianSortedArrays([]int{1, 13, 14, 16, 18, 21, 34}, []int{3, 4, 5, 67, 89, 91}))
+// }

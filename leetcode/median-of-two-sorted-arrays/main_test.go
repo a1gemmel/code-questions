@@ -45,13 +45,19 @@ func Test_MedianOf2(t *testing.T) {
 			arr2:     []int{6, 7, 8, 9, 10, 11},
 		},
 		{
-			expected: 17,
+			expected: 16,
 			arr1:     []int{1, 13, 14, 16, 18, 21, 34},
 			arr2:     []int{3, 4, 5, 67, 89, 91},
+		},
+		{
+			expected: 6,
+			arr1:     []int{6},
+			arr2:     []int{},
 		},
 	}
 
 	for _, test := range tests {
 		assert.Equal(t, test.expected, findMedianSortedArrays(test.arr1, test.arr2))
+		assert.Equal(t, test.expected, findMedianSortedArrays(test.arr2, test.arr1))
 	}
 }
