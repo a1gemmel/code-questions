@@ -35,7 +35,6 @@ func merge(nums1 []int, nums2 []int) []int {
 }
 
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
-
 	for len(nums1) > 2 && len(nums2) > 2 {
 		minLen := min(len(nums1), len(nums2))
 		var toCut int
