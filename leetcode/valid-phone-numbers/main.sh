@@ -1,0 +1,1 @@
+cat file.txt | grep -P  '^(\d\d\d-\d\d\d-\d\d\d\d|\(\d\d\d\) \d\d\d-\d\d\d\d)$'

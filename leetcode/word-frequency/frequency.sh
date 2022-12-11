@@ -1,0 +1,1 @@
+ cat words.txt | xargs -n 1 echo -e | sort | uniq -c | sort -r | awk '{print $1 " " $2}'
