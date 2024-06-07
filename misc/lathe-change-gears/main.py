@@ -1,5 +1,5 @@
 import itertools
-from typing import Tuple, Dict
+from typing import Tuple, Dict, List
 
 SPINDLE_GEAR = 48
 LEADSCREW_GEAR = 62
@@ -10,7 +10,7 @@ HAVE_GEARS = [108, 102, 60]
 MIN_TOOTH_COUNT = 30
 MAX_TOOTH_COUNT = 134
 
-ACCEPTABLE_ERROR_PERCENT = 0.6
+ACCEPTABLE_ERROR = 0.005
 
 # From 1/4" to 1"
 UNC_TPI = {20, 18, 16, 14, 13, 12, 11, 10, 9, 8}
@@ -32,24 +32,33 @@ class Thread:
 
 
 def tpi(change1 : int, change2 : int) -> float:
-    return round(LEADSCREW_GEAR / SPINDLE_GEAR * change1 / change2 * LEADSCREW_TPI, 3)
+    return LEADSCREW_GEAR / SPINDLE_GEAR * change1 / change2 * LEADSCREW_TPI
 
 def relative_error(expected : float, actual : float) -> float:
-    return round(abs(1 - actual / expected) * 100, 3)
+    return abs(1 - actual / expected)
 
 def mm(change1 : int, change2 : int) -> float:
     return 1 / tpi(change1, change2) * 25.4 
 
 
-def combinatorial_find_best_for_n_gears(num_gears : int):
+def find_best(have_gears : List[int]):
+    num_threads =0
+    while num_threads < len(DESIRED_TPIS):
+        have_gears, num_threads = find_best_next_gear(have_gears)
+
+    print(have_gears)
+
+
+def find_best_next_gear(have_gears : List[int]) -> Tuple[List[int], int]:
+    """
+    Returns a list of gears and the number of threads they can generate
+    """
     best_possible_threads = {}
     best_gears = []
 
-    for option in itertools.combinations(range(MIN_TOOTH_COUNT, MAX_TOOTH_COUNT + 1, 2), num_gears):
-        all_gears = [*HAVE_GEARS, *option]
+    for option in range(MIN_TOOTH_COUNT, MAX_TOOTH_COUNT + 1):
+        all_gears = [*have_gears, option]
         possible_threads : Dict[float, Thread]= {}
-        #print(f"Testing {all_gears}")
-
         permutations = itertools.permutations(all_gears, 2)
 
         for (gear1, gear2) in permutations:
@@ -57,25 +66,25 @@ def combinatorial_find_best_for_n_gears(num_gears : int):
 
             for desired in DESIRED_TPIS:
                 err = relative_error(desired, thread)
-                if err <= ACCEPTABLE_ERROR_PERCENT:
+                if err <= ACCEPTABLE_ERROR:
                     if desired not in possible_threads or possible_threads[desired].error > err:
                         possible_threads[desired] = Thread(thread, err, gear1, gear2)
 
         if len(possible_threads) > len(best_possible_threads):
             best_possible_threads = possible_threads
             best_gears = all_gears
-    print("================================")
+    
+    print("===============================")
+    print(f"{len(have_gears) + 1} gears")
     print(f"Best possibility is {len(best_possible_threads)}/{len(DESIRED_TPIS)} ({DESIRED_TPIS})")
     print("Threads:", best_possible_threads)
     print("Gears: ", best_gears)
+    print("MSE: ", sum(t.error **2 for t in best_possible_threads.values()) / len(best_possible_threads))
 
-
-
-
-
+    return (best_gears, len(best_possible_threads))
 
 
 if __name__ == "__main__":
-    combinatorial_find_best_for_n_gears(4)
+    find_best(HAVE_GEARS)
 
 
